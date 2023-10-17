@@ -37,6 +37,17 @@ class ATPSDemoCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* AimAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Aiming, meta = (AllowPrivateAccess = "true"))
+	float AimingMaxWalkSpeed;
+
+	float NormalMaxWalkSpeed;
+
+	UPROPERTY(BlueprintReadOnly, Category = Aiming, meta = (AllowPrivateAccess = "true"))
+	bool bAiming;
+	
 public:
 	ATPSDemoCharacter();
 	
@@ -48,7 +59,10 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+	
+	void Aim();
+	void StopAiming();
+	void SetAiming(bool isAim);
 
 protected:
 	// APawn interface

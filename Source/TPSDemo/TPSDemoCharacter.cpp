@@ -49,6 +49,9 @@ ATPSDemoCharacter::ATPSDemoCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	AimingMaxWalkSpeed = 300.0f;
+	bAiming = false;
 }
 
 void ATPSDemoCharacter::BeginPlay()
@@ -64,6 +67,8 @@ void ATPSDemoCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	NormalMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,6 +89,8 @@ void ATPSDemoCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerI
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATPSDemoCharacter::Look);
 
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ATPSDemoCharacter::Aim);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ATPSDemoCharacter::StopAiming);
 	}
 
 }
@@ -124,6 +131,19 @@ void ATPSDemoCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void ATPSDemoCharacter::Aim()
+{
+	SetAiming(true);
+}
 
+void ATPSDemoCharacter::StopAiming()
+{
+	SetAiming(false);
+}
 
-
+void ATPSDemoCharacter::SetAiming(bool isAim)
+{
+	bAiming = isAim;
+	GetCharacterMovement()->MaxWalkSpeed = isAim ? AimingMaxWalkSpeed : NormalMaxWalkSpeed;
+	GetCharacterMovement()->bOrientRotationToMovement = !isAim;
+}
