@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "TPSDemoGameMode.h"
-#include "TPSDemoCharacter.h"
+#include "ThirdPersonCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 ATPSDemoGameMode::ATPSDemoGameMode()

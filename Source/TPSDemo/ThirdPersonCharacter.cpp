@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "TPSDemoCharacter.h"
+#include "ThirdPersonCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -12,9 +12,9 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-// ATPSDemoCharacter
+// AThirdPersonCharacter
 
-ATPSDemoCharacter::ATPSDemoCharacter()
+AThirdPersonCharacter::AThirdPersonCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -54,7 +54,7 @@ ATPSDemoCharacter::ATPSDemoCharacter()
 	bAiming = false;
 }
 
-void ATPSDemoCharacter::BeginPlay()
+void AThirdPersonCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
@@ -74,7 +74,7 @@ void ATPSDemoCharacter::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void ATPSDemoCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
@@ -84,18 +84,18 @@ void ATPSDemoCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerI
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		//Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATPSDemoCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Move);
 
 		//Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATPSDemoCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Look);
 
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ATPSDemoCharacter::Aim);
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ATPSDemoCharacter::StopAiming);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Aim);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AThirdPersonCharacter::StopAiming);
 	}
 
 }
 
-void ATPSDemoCharacter::Move(const FInputActionValue& Value)
+void AThirdPersonCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -126,7 +126,7 @@ void ATPSDemoCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void ATPSDemoCharacter::Look(const FInputActionValue& Value)
+void AThirdPersonCharacter::Look(const FInputActionValue& Value)
 {
 	if (bAiming)
 	{
@@ -144,17 +144,17 @@ void ATPSDemoCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void ATPSDemoCharacter::Aim()
+void AThirdPersonCharacter::Aim()
 {
 	SetAiming(true);
 }
 
-void ATPSDemoCharacter::StopAiming()
+void AThirdPersonCharacter::StopAiming()
 {
 	SetAiming(false);
 }
 
-void ATPSDemoCharacter::SetAiming(bool isAim)
+void AThirdPersonCharacter::SetAiming(bool isAim)
 {
 	bAiming = isAim;
 	GetCharacterMovement()->MaxWalkSpeed = isAim ? AimingMaxWalkSpeed : NormalMaxWalkSpeed;

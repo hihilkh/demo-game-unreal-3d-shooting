@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "TPSDemoCharacter.generated.h"
+#include "ThirdPersonCharacter.generated.h"
 
-
+// ThirdPersonCharacterの略：TPC
 UCLASS(config=Game)
-class ATPSDemoCharacter : public ACharacter
+class AThirdPersonCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -49,7 +49,7 @@ class ATPSDemoCharacter : public ACharacter
 	bool bAiming;
 	
 public:
-	ATPSDemoCharacter();
+	AThirdPersonCharacter();
 	
 
 protected:
