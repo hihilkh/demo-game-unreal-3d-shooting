@@ -53,6 +53,8 @@ public:
 	
 
 protected:
+	
+	void Jump() override;
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

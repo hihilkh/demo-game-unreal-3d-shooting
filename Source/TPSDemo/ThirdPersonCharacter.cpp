@@ -80,7 +80,7 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		//Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		//Moving
@@ -95,10 +95,20 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 }
 
+void AThirdPersonCharacter::Jump()
+{
+	if (bAiming)
+	{
+		return;
+	}
+	
+	ACharacter::Jump();
+}
+
 void AThirdPersonCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
