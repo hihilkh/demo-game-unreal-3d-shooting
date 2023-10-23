@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Weapon/Gun.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,6 +70,11 @@ void AThirdPersonCharacter::BeginPlay()
 	}
 
 	NormalMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+
+	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
+	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("weapon_r_gun"));
+	Gun->SetOwner(this);
+	//Gun->SetActorHiddenInGame(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,9 +170,10 @@ void AThirdPersonCharacter::StopAiming()
 	SetAiming(false);
 }
 
-void AThirdPersonCharacter::SetAiming(bool isAim)
+void AThirdPersonCharacter::SetAiming(bool bAim)
 {
-	bAiming = isAim;
-	GetCharacterMovement()->MaxWalkSpeed = isAim ? AimingMaxWalkSpeed : NormalMaxWalkSpeed;
-	GetCharacterMovement()->bOrientRotationToMovement = !isAim;
+	bAiming = bAim;
+	GetCharacterMovement()->MaxWalkSpeed = bAim ? AimingMaxWalkSpeed : NormalMaxWalkSpeed;
+	GetCharacterMovement()->bOrientRotationToMovement = !bAim;
+	//Gun->SetActorHiddenInGame(!bAim);
 }

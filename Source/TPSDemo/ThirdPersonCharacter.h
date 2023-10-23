@@ -7,6 +7,8 @@
 #include "InputActionValue.h"
 #include "ThirdPersonCharacter.generated.h"
 
+class AGun;
+
 // ThirdPersonCharacterの略：TPC
 UCLASS(config=Game)
 class AThirdPersonCharacter : public ACharacter
@@ -47,6 +49,12 @@ class AThirdPersonCharacter : public ACharacter
 
 	UPROPERTY(BlueprintReadOnly, Category = Aiming, meta = (AllowPrivateAccess = "true"))
 	bool bAiming;
+
+	UPROPERTY(EditDefaultsOnly, Category = Weapon)
+	TSubclassOf<AGun> GunClass;
+
+	UPROPERTY()
+	AGun* Gun;
 	
 public:
 	AThirdPersonCharacter();
@@ -64,7 +72,7 @@ protected:
 	
 	void Aim();
 	void StopAiming();
-	void SetAiming(bool isAim);
+	void SetAiming(bool bAim);
 
 protected:
 	// APawn interface
