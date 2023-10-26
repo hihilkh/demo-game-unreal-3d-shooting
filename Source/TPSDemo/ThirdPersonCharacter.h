@@ -99,6 +99,6 @@ public:
 	
 private:
 	UFUNCTION(BlueprintCallable, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	void ResetCameraTransform();
+	void ResetCameraTransform(bool bAim);
 };
 

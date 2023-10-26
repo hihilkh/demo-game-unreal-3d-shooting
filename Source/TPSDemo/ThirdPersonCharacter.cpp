@@ -51,7 +51,7 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 	AimingCameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("AimingCameraBoom"));
 	AimingCameraBoom->SetupAttachment(RootComponent);
 	AimingCameraBoom->TargetArmLength = 100.0f;
-	AimingCameraBoom->bUsePawnControlRotation = false;
+	AimingCameraBoom->bUsePawnControlRotation = true;
 	
 	AimingCameraChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("AimingCameraChild"));
 	AimingCameraChild->SetupAttachment(AimingCameraBoom);
@@ -85,7 +85,7 @@ void AThirdPersonCharacter::BeginPlay()
 	Gun->SetOwner(this);
 	//Gun->SetActorHiddenInGame(true);
 	
-	ResetCameraTransform();
+	ResetCameraTransform(bAiming);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ void AThirdPersonCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-
+	
 	if (Controller != nullptr)
 	{
 		if (bAiming)
@@ -155,19 +155,23 @@ void AThirdPersonCharacter::Move(const FInputActionValue& Value)
 
 void AThirdPersonCharacter::Look(const FInputActionValue& Value)
 {
-	if (bAiming)
-	{
-		return;
-	}
-	
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		if (bAiming)
+		{
+			AddControllerYawInput(LookAxisVector.X);
+			AddControllerPitchInput(LookAxisVector.Y);
+			AddActorLocalRotation(FRotator(0.0, LookAxisVector.X * PlayerController->GetDeprecatedInputYawScale(), 0.0));
+		}
+		else
+		{
+			// add yaw and pitch input to controller
+			AddControllerYawInput(LookAxisVector.X);
+			AddControllerPitchInput(LookAxisVector.Y);
+		}
 	}
 }
 
@@ -183,6 +187,11 @@ void AThirdPersonCharacter::StopAiming()
 
 void AThirdPersonCharacter::SetAiming(bool bAim)
 {
+	if (bAiming == bAim)
+	{
+		return;
+	}
+	
 	bAiming = bAim;
 	GetCharacterMovement()->MaxWalkSpeed = bAim ? AimingMaxWalkSpeed : NormalMaxWalkSpeed;
 	GetCharacterMovement()->bOrientRotationToMovement = !bAim;
@@ -190,10 +199,7 @@ void AThirdPersonCharacter::SetAiming(bool bAim)
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (!bAim)
-		{
-			ResetCameraTransform();
-		}
+		ResetCameraTransform(bAim);
 		
 		PlayerController->SetViewTargetWithBlend(
 			bAim ? AimingCameraChild->GetChildActor() : this,
@@ -204,10 +210,11 @@ void AThirdPersonCharacter::SetAiming(bool bAim)
 	}
 }
 
-void AThirdPersonCharacter::ResetCameraTransform()
+void AThirdPersonCharacter::ResetCameraTransform(bool bAim)
 {
 	if (Controller != nullptr)
 	{
-		Controller->SetControlRotation(CameraBoom->GetRelativeRotation());
+		USpringArmComponent* SpringArm = bAim ? AimingCameraBoom : CameraBoom;
+		Controller->SetControlRotation(SpringArm->GetComponentRotation());
 	}
 }
