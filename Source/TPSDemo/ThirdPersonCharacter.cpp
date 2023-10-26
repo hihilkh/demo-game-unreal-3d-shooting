@@ -36,7 +36,7 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
-
+	
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -48,10 +48,19 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	AimingCameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("AimingCameraBoom"));
+	AimingCameraBoom->SetupAttachment(RootComponent);
+	AimingCameraBoom->TargetArmLength = 100.0f;
+	AimingCameraBoom->bUsePawnControlRotation = false;
+	
+	AimingCameraChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("AimingCameraChild"));
+	AimingCameraChild->SetupAttachment(AimingCameraBoom);
+	
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	AimingMaxWalkSpeed = 300.0f;
+	AimingCameraBlendTime = 0.2f;
 	bAiming = false;
 }
 
@@ -75,6 +84,8 @@ void AThirdPersonCharacter::BeginPlay()
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("weapon_r_gun"));
 	Gun->SetOwner(this);
 	//Gun->SetActorHiddenInGame(true);
+	
+	ResetCameraTransform();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -176,4 +187,27 @@ void AThirdPersonCharacter::SetAiming(bool bAim)
 	GetCharacterMovement()->MaxWalkSpeed = bAim ? AimingMaxWalkSpeed : NormalMaxWalkSpeed;
 	GetCharacterMovement()->bOrientRotationToMovement = !bAim;
 	//Gun->SetActorHiddenInGame(!bAim);
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (!bAim)
+		{
+			ResetCameraTransform();
+		}
+		
+		PlayerController->SetViewTargetWithBlend(
+			bAim ? AimingCameraChild->GetChildActor() : this,
+			AimingCameraBlendTime,
+			VTBlend_Linear,
+			0,
+			true);
+	}
+}
+
+void AThirdPersonCharacter::ResetCameraTransform()
+{
+	if (Controller != nullptr)
+	{
+		Controller->SetControlRotation(CameraBoom->GetRelativeRotation());
+	}
 }
