@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "ThirdPerson/TPCPlayerController.h"
 #include "Weapon/Gun.h"
 
 
@@ -70,7 +71,7 @@ void AThirdPersonCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (ATPCPlayerController* PlayerController = Cast<ATPCPlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
@@ -97,7 +98,7 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		//Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		//Moving
@@ -119,7 +120,7 @@ void AThirdPersonCharacter::Jump()
 		return;
 	}
 	
-	ACharacter::Jump();
+	Super::Jump();
 }
 
 void AThirdPersonCharacter::Move(const FInputActionValue& Value)
@@ -155,23 +156,9 @@ void AThirdPersonCharacter::Move(const FInputActionValue& Value)
 
 void AThirdPersonCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (ATPCPlayerController* PlayerController = Cast<ATPCPlayerController>(Controller))
 	{
-		if (bAiming)
-		{
-			AddControllerYawInput(LookAxisVector.X);
-			AddControllerPitchInput(LookAxisVector.Y);
-			AddActorLocalRotation(FRotator(0.0, LookAxisVector.X * PlayerController->GetDeprecatedInputYawScale(), 0.0));
-		}
-		else
-		{
-			// add yaw and pitch input to controller
-			AddControllerYawInput(LookAxisVector.X);
-			AddControllerPitchInput(LookAxisVector.Y);
-		}
+		PlayerController->Look(Value);
 	}
 }
 
@@ -197,7 +184,7 @@ void AThirdPersonCharacter::SetAiming(bool bAim)
 	GetCharacterMovement()->bOrientRotationToMovement = !bAim;
 	//Gun->SetActorHiddenInGame(!bAim);
 
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (ATPCPlayerController* PlayerController = Cast<ATPCPlayerController>(Controller))
 	{
 		ResetCameraTransform(bAim);
 		
@@ -207,6 +194,8 @@ void AThirdPersonCharacter::SetAiming(bool bAim)
 			VTBlend_Linear,
 			0,
 			true);
+
+		PlayerController->SetAiming(bAim);
 	}
 }
 

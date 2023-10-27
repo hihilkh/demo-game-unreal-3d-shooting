@@ -72,19 +72,9 @@ public:
 
 protected:
 	
-	void Jump() override;
-
-	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
-
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 	
-	void Aim();
-	void StopAiming();
-	void SetAiming(bool bAim);
-
-protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
@@ -96,8 +86,15 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	void Jump() override;
+	void Move(const FInputActionValue& Value);
+	void Aim();
+	void StopAiming();
 	
 private:
+	void SetAiming(bool bAim);
+	
 	UFUNCTION(BlueprintCallable, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	void ResetCameraTransform(bool bAim);
 };
