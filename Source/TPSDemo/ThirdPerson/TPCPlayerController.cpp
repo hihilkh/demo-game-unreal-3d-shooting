@@ -5,13 +5,21 @@
 #include "InputActionValue.h"
 #include "Blueprint/UserWidget.h"
 
+ATPCPlayerController::ATPCPlayerController() :
+	bAiming(false),
+	NormalViewPitchMin(-89.0f),
+	NormalViewPitchMax(89.0f),
+	AimingViewPitchMin(-45.0f),
+	AimingViewPitchMax(30.0f)
+{
+}
+
 void ATPCPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	bAiming = false;
 	Crosshairs = CreateWidget(this, CrosshairsClass);
-	SetCrosshairs(bAiming);
+	SetAiming(bAiming);
 }
 
 
@@ -31,13 +39,9 @@ void ATPCPlayerController::Look(const FInputActionValue& Value)
 
 void ATPCPlayerController::SetAiming(bool bAim)
 {
-	if (bAiming == bAim)
-	{
-		return;
-	}
-
 	bAiming = bAim;
-	SetCrosshairs(bAiming);
+	SetCrosshairs(bAim);
+	SetViewPitchMinMax(bAim);
 }
 
 void ATPCPlayerController::SetCrosshairs(bool bShow)
@@ -54,3 +58,10 @@ void ATPCPlayerController::SetCrosshairs(bool bShow)
 		}
 	}
 }
+
+void ATPCPlayerController::SetViewPitchMinMax(bool bAim)
+{
+	PlayerCameraManager->ViewPitchMin = bAim ? AimingViewPitchMin : NormalViewPitchMin;
+	PlayerCameraManager->ViewPitchMax = bAim ? AimingViewPitchMax : NormalViewPitchMax;
+}
+	

@@ -21,6 +21,21 @@ class TPSDEMO_API ATPCPlayerController : public APlayerController
 
 	UUserWidget* Crosshairs;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pitch, meta = (AllowPrivateAccess = "true"))
+	float NormalViewPitchMin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pitch, meta = (AllowPrivateAccess = "true"))
+	float NormalViewPitchMax;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pitch, meta = (AllowPrivateAccess = "true"))
+	float AimingViewPitchMin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pitch, meta = (AllowPrivateAccess = "true"))
+	float AimingViewPitchMax;
+
+public:
+	ATPCPlayerController();
+	
 protected:
 	void BeginPlay() override;
 	
@@ -30,4 +45,5 @@ public:
 
 private:
 	void SetCrosshairs(bool bShow);
+	void SetViewPitchMinMax(bool bAim);
 };
