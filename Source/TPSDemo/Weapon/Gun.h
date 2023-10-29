@@ -35,6 +35,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* ShootStartRefPoint;
 
+	UPROPERTY(VisibleAnywhere)
+	class UNiagaraComponent* ShootLightFXComponent;
+
 	UPROPERTY(EditDefaultsOnly, Category = Shoot)
 	float ReloadTime;
 
@@ -47,6 +50,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Shoot)
 	TSubclassOf<class UCameraShakeBase> CameraShakeClass;
 	
+	UPROPERTY(EditDefaultsOnly, Category = Shoot)
+	class UNiagaraSystem* SparkFX;
+    	
 	float RemainingReloadTime;
 
 protected:

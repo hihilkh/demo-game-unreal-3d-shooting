@@ -2,6 +2,8 @@
 
 
 #include "Gun.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AGun::AGun()
@@ -18,6 +20,9 @@ AGun::AGun()
 	ShootStartRefPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ShootStartRefPoint"));
 	ShootStartRefPoint->SetupAttachment(Root);
 
+	ShootLightFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ShootLightFXComponent"));
+	ShootLightFXComponent->SetupAttachment(ShootStartRefPoint);
+	
 	ReloadTime = 0.5f;
 	Damage = 1;
 	ShootRange = 1000.0f;
@@ -73,6 +78,7 @@ void AGun::Shoot()
 	}
 
 	RemainingReloadTime = ReloadTime;
+	ShootLightFXComponent->Activate(true);
 	
 	FVector ViewPointStart;
 	FRotator Rotation;
@@ -81,13 +87,17 @@ void AGun::Shoot()
 	const FVector Start = CalculateShootStartPos(ViewPointStart, Rotation);
 	const FVector End = Start + Rotation.Vector() * ShootRange;
 	
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, true);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Red, true);
 
 	FHitResult HitResult;
 	bool bSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel1);
 	if (bSuccess)
 	{
-		DrawDebugPoint(GetWorld(), HitResult.Location, 20, FColor::Red, true);
+		//DrawDebugPoint(GetWorld(), HitResult.Location, 20, FColor::Red, true);
+		if (SparkFX)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SparkFX, HitResult.Location);
+		}
 	}
 	
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
