@@ -48,6 +48,9 @@ class AThirdPersonCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* AimAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* AttackAction;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Aiming, meta = (AllowPrivateAccess = "true"))
 	float AimingMaxWalkSpeed;
 
@@ -91,6 +94,7 @@ public:
 	void Move(const FInputActionValue& Value);
 	void Aim();
 	void StopAiming();
+	void Attack();
 	
 private:
 	void SetAiming(bool bAim);

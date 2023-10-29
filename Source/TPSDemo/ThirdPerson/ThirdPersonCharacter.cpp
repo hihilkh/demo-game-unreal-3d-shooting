@@ -9,8 +9,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "ThirdPerson/TPCPlayerController.h"
-#include "Weapon/Gun.h"
+#include "TPCPlayerController.h"
+#include "TPSDemo/Weapon/Gun.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -109,6 +109,8 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AThirdPersonCharacter::StopAiming);
+
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Attack);
 	}
 
 }
@@ -203,7 +205,30 @@ void AThirdPersonCharacter::ResetCameraTransform(bool bAim)
 {
 	if (Controller != nullptr)
 	{
+		if (bAim)
+		{
+			FVector Start;
+			FRotator Rotation;
+			Controller->GetPlayerViewPoint(Start, Rotation);
+			SetActorRotation(FRotator(0, Rotation.Yaw, 0));
+		}
+		
 		USpringArmComponent* SpringArm = bAim ? AimingCameraBoom : CameraBoom;
 		Controller->SetControlRotation(SpringArm->GetComponentRotation());
+	}
+}
+
+void AThirdPersonCharacter::Attack()
+{
+	if (bAiming)
+	{
+		if (Gun)
+		{
+			Gun->TryShoot();
+		}
+	}
+	else
+	{
+		// TODO
 	}
 }

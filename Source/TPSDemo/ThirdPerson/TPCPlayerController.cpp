@@ -19,9 +19,9 @@ void ATPCPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	Crosshairs = CreateWidget(this, CrosshairsClass);
+	Crosshairs->AddToViewport();
 	SetAiming(bAiming);
 }
-
 
 void ATPCPlayerController::Look(const FInputActionValue& Value)
 {
@@ -50,11 +50,11 @@ void ATPCPlayerController::SetCrosshairs(bool bShow)
 	{
 		if (bShow)
 		{
-			Crosshairs->AddToViewport();
+			Crosshairs->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
-			Crosshairs->RemoveFromParent();
+			Crosshairs->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }

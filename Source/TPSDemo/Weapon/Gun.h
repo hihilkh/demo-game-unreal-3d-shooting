@@ -23,10 +23,31 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	bool TryShoot();
+	
 private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
 
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* ShootStartRefPoint;
+
+	UPROPERTY(EditDefaultsOnly, Category = Shoot)
+	float ReloadTime;
+
+	UPROPERTY(EditDefaultsOnly, Category = Shoot)
+	int Damage;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Shoot)
+	float ShootRange;
+
+	float RemainingReloadTime;
+
+protected:
+	virtual bool CanShoot() const;
+	virtual void Shoot();
+	virtual FVector CalculateShootStartPos(const FVector& ViewPointStart, const FRotator& ViewPointRotation) const;
 };
