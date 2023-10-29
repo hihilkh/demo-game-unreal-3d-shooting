@@ -44,6 +44,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Shoot)
 	float ShootRange;
 
+	UPROPERTY(EditDefaultsOnly, Category = Shoot)
+	TSubclassOf<class UCameraShakeBase> CameraShakeClass;
+	
 	float RemainingReloadTime;
 
 protected:

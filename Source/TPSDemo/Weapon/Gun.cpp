@@ -89,6 +89,14 @@ void AGun::Shoot()
 	{
 		DrawDebugPoint(GetWorld(), HitResult.Location, 20, FColor::Red, true);
 	}
+	
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (CameraShakeClass)
+		{
+			PlayerController->ClientStartCameraShake(CameraShakeClass);
+		}
+	}
 }
 
 FVector AGun::CalculateShootStartPos(const FVector& ViewPointStart, const FRotator& ViewPointRotation) const
