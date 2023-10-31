@@ -3,6 +3,7 @@
 
 #include "Bullseye.h"
 
+#include "NiagaraFunctionLibrary.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TPSDemo/Common/HPComponent.h"
@@ -36,7 +37,7 @@ void ABullseye::Tick(float DeltaTime)
 
 }
 
-float ABullseye::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float ABullseye::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	if (GetDied())
 	{
@@ -53,7 +54,7 @@ float ABullseye::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	HPComponent->TakeDamage(RealDamage, bDie);
 	Super::TakeDamage(RealDamage, DamageEvent, EventInstigator, DamageCauser);
 
-	UE_LOG(LogTemp, Warning, TEXT("Hit damage : %f, Remaining : %f"), RealDamage, HPComponent->GetCurrentHP());
+	//UE_LOG(LogTemp, Warning, TEXT("Hit damage : %f, Remaining : %f"), RealDamage, HPComponent->GetCurrentHP());
 	if (bDie)
 	{
 		Die();
@@ -69,5 +70,12 @@ bool ABullseye::GetDied() const
 
 void ABullseye::Die()
 {
-	// TODO
+	TriggeredEvent.Broadcast();
+
+	if (DieFX)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, DieFX, GetActorLocation());
+	}
+
+	Destroy();
 }

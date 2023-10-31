@@ -22,6 +22,10 @@ class TPSDEMO_API ABullseye : public AActor
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Damage, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UDamageType> AcceptDamageType;
+
+	UPROPERTY(EditDefaultsOnly, Category = Damage)
+	class UNiagaraSystem* DieFX;
+	
 public:	
 	// Sets default values for this actor's properties
 	ABullseye();
@@ -34,8 +38,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	bool GetDied() const;
+
+	DECLARE_EVENT(ABullseye, FTriggeredEvent);
+	FTriggeredEvent& OnTriggered() { return TriggeredEvent; }
+
+private:
+	FTriggeredEvent TriggeredEvent;
 	
 private:
 	void Die();
