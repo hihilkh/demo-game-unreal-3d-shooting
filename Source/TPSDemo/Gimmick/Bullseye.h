@@ -11,6 +11,12 @@ class TPSDEMO_API ABullseye : public AActor
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* Root;
+	
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* Mesh;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = HP, meta = (AllowPrivateAccess = "true"))
 	class UHPComponent* HPComponent;
 

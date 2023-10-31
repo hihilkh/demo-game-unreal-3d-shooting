@@ -13,6 +13,12 @@ ABullseye::ABullseye()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(Root);
+	
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(Root);
+	
 	HPComponent = CreateDefaultSubobject<UHPComponent>(TEXT("HPComponent"));
 }
 
