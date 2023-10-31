@@ -4,6 +4,8 @@
 #include "Gun.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "GunDamageType.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 AGun::AGun()
@@ -22,11 +24,6 @@ AGun::AGun()
 
 	ShootLightFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ShootLightFXComponent"));
 	ShootLightFXComponent->SetupAttachment(ShootStartRefPoint);
-	
-	ReloadTime = 0.5f;
-	Damage = 1;
-	ShootRange = 1000.0f;
-	RemainingReloadTime = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -93,6 +90,12 @@ void AGun::Shoot()
 	bool bSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel1);
 	if (bSuccess)
 	{
+		AActor* Target = HitResult.GetActor();
+		if (Target)
+		{
+			FPointDamageEvent DamageEvent(Damage, HitResult, -Rotation.Vector(), DamageType);
+			Target->TakeDamage(Damage, DamageEvent, Controller, this);
+		}
 		//DrawDebugPoint(GetWorld(), HitResult.Location, 20, FColor::Red, true);
 		if (SparkFX)
 		{

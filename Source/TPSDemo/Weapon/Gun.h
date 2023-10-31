@@ -39,13 +39,16 @@ private:
 	class UNiagaraComponent* ShootLightFXComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = Shoot)
-	float ReloadTime;
+	float ReloadTime = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Shoot)
-	int Damage;
+	float Damage = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Shoot)
+	TSubclassOf<class UGunDamageType> DamageType;
 	
 	UPROPERTY(EditDefaultsOnly, Category = Shoot)
-	float ShootRange;
+	float ShootRange = 1000.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Shoot)
 	TSubclassOf<class UCameraShakeBase> CameraShakeClass;
@@ -53,7 +56,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Shoot)
 	class UNiagaraSystem* SparkFX;
     	
-	float RemainingReloadTime;
+	float RemainingReloadTime = 0.0f;
 
 protected:
 	virtual bool CanShoot() const;
