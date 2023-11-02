@@ -5,6 +5,7 @@
 
 #include "NiagaraFunctionLibrary.h"
 #include "Engine/DamageEvents.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TPSDemo/Common/HPComponent.h"
 
@@ -81,6 +82,17 @@ void ABullseye::Die()
 	if (DieFX)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, DieFX, GetActorLocation());
+
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+		if (PlayerController && CameraShakeClass)
+		{
+			const FVector PlayerPos = PlayerController->GetPawn()->GetActorLocation();
+			const float Distance = FVector::Distance(PlayerPos, GetActorLocation());
+			float Alpha = (Distance - MinCameraShakeDistance) / (MaxCameraShakeDistance - MinCameraShakeDistance);
+			Alpha = FMath::Clamp(Alpha, 0.0f, 1.0f);
+			const float Scale = FMath::Lerp(1.0f, 0.0f, Alpha);
+			PlayerController->ClientStartCameraShake(CameraShakeClass, Scale);
+		}
 	}
 
 	DestroyWithTrigger(false);

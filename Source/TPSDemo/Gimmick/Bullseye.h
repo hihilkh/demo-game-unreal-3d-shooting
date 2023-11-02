@@ -23,9 +23,18 @@ class TPSDEMO_API ABullseye : public AActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Damage, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UDamageType> AcceptDamageType;
 
-	UPROPERTY(EditDefaultsOnly, Category = Damage)
+	UPROPERTY(EditAnywhere, Category = Explosion)
 	class UNiagaraSystem* DieFX;
 
+	UPROPERTY(EditAnywhere, Category = Explosion)
+	TSubclassOf<class UCameraShakeBase> CameraShakeClass;
+
+	UPROPERTY(EditAnywhere, Category = Explosion)
+	float MinCameraShakeDistance = 500.0f;
+
+	UPROPERTY(EditAnywhere, Category = Explosion)
+	float MaxCameraShakeDistance = 1200.0f;
+	
 	UPROPERTY(EditAnywhere, Category = Event)
 	FString EventName = FString(TEXT(""));
 	
