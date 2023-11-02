@@ -8,6 +8,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TPSDemo/Common/HPComponent.h"
 
+ABullseye::FTriggeredEvent ABullseye::TriggeredEvent;
+ABullseye::FTriggerFailedEvent ABullseye::TriggerFailedEvent;
+
 // Sets default values
 ABullseye::ABullseye()
 {
@@ -70,12 +73,32 @@ bool ABullseye::GetDied() const
 
 void ABullseye::Die()
 {
-	TriggeredEvent.Broadcast();
+	if (!EventName.IsEmpty())
+	{
+		TriggeredEvent.Broadcast(EventName);
+	}
 
 	if (DieFX)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, DieFX, GetActorLocation());
 	}
 
+	DestroyWithTrigger(false);
+}
+
+void ABullseye::DestroyWithTrigger(bool bTriggerFailed)
+{
+	bool bPendingKill = !IsValidChecked(this);
+	if (bPendingKill)
+	{
+		return;
+	}
+
+	if (bTriggerFailed && !EventName.IsEmpty())
+	{
+		TriggerFailedEvent.Broadcast(EventName);
+	}
+
 	Destroy();
 }
+

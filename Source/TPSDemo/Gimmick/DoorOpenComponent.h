@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BullseyeReactorComponent.h"
-#include "BullseyeMoveReactorComponent.generated.h"
+#include "BullseyeEventHandler.h"
+#include "DoorOpenComponent.generated.h"
 
 /**
  * 
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TPSDEMO_API UBullseyeMoveReactorComponent : public UBullseyeReactorComponent
+class TPSDEMO_API UDoorOpenComponent : public UBullseyeEventHandler
 {
 	GENERATED_BODY()
 
@@ -18,13 +18,13 @@ class TPSDEMO_API UBullseyeMoveReactorComponent : public UBullseyeReactorCompone
 	FVector MoveDistance;
 
 	UPROPERTY(EditAnywhere, Category = Move)
-	float MoveTime;
+	float MoveTime = 1.0f;
 
 	FVector InitialPos;
 	float AnimatingTime = 0.0f;
 	
 public:
-	UBullseyeMoveReactorComponent();
+	UDoorOpenComponent();
 
 protected:
 	void BeginPlay() override;

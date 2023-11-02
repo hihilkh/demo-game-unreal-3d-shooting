@@ -4,20 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BullseyeReactorComponent.generated.h"
+#include "BullseyeEventHandler.generated.h"
 
 
 UCLASS( ClassGroup=(Custom) )
-class TPSDEMO_API UBullseyeReactorComponent : public UActorComponent
+class TPSDEMO_API UBullseyeEventHandler : public UActorComponent
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	class ABullseye* TriggerSource;
-	
 public:	
 	// Sets default values for this component's properties
-	UBullseyeReactorComponent();
+	UBullseyeEventHandler();
 
 protected:
 	// Called when the game starts
@@ -27,8 +24,6 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-protected:
-	UFUNCTION()
 	virtual void Trigger() {}
-		
+	virtual void TriggerFail() {}
 };

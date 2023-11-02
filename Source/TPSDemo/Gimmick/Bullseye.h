@@ -25,6 +25,9 @@ class TPSDEMO_API ABullseye : public AActor
 
 	UPROPERTY(EditDefaultsOnly, Category = Damage)
 	class UNiagaraSystem* DieFX;
+
+	UPROPERTY(EditAnywhere, Category = Event)
+	FString EventName = FString(TEXT(""));
 	
 public:	
 	// Sets default values for this actor's properties
@@ -41,11 +44,17 @@ public:
 	float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	bool GetDied() const;
 
-	DECLARE_EVENT(ABullseye, FTriggeredEvent);
-	FTriggeredEvent& OnTriggered() { return TriggeredEvent; }
+	DECLARE_EVENT_OneParam(ABullseye, FTriggeredEvent, const FString&);
+	static FTriggeredEvent& OnTriggered() { return TriggeredEvent; }
 
+	DECLARE_EVENT_OneParam(ABullseye, FTriggerFailedEvent, const FString&);
+	static FTriggerFailedEvent& OnTriggerFailed() { return TriggerFailedEvent; }
+	
+	void DestroyWithTrigger(bool bTriggerFailed);
+	
 private:
-	FTriggeredEvent TriggeredEvent;
+	static FTriggeredEvent TriggeredEvent;
+	static FTriggerFailedEvent TriggerFailedEvent;
 	
 private:
 	void Die();
