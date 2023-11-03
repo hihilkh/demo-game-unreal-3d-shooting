@@ -9,9 +9,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TPSDemo/Common/HPComponent.h"
 
-ABullseye::FTriggeredEvent ABullseye::TriggeredEvent;
-ABullseye::FTriggerFailedEvent ABullseye::TriggerFailedEvent;
-
 // Sets default values
 ABullseye::ABullseye()
 {
@@ -74,10 +71,7 @@ bool ABullseye::GetDied() const
 
 void ABullseye::Die()
 {
-	if (!EventName.IsEmpty())
-	{
-		TriggeredEvent.Broadcast(EventName);
-	}
+	TriggeredDelegate.Broadcast();
 
 	if (DieFX)
 	{
@@ -106,9 +100,9 @@ void ABullseye::DestroyWithTrigger(bool bTriggerFailed)
 		return;
 	}
 
-	if (bTriggerFailed && !EventName.IsEmpty())
+	if (bTriggerFailed)
 	{
-		TriggerFailedEvent.Broadcast(EventName);
+		TriggerFailedDelegate.Broadcast();
 	}
 
 	Destroy();
