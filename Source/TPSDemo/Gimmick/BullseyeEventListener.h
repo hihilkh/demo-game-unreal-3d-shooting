@@ -18,9 +18,6 @@ class TPSDEMO_API UBullseyeEventListener : public UActorComponent
 	/** Eventを何回TriggerしたらHandlerのTrigger関数を呼び出すか */
 	UPROPERTY(EditAnywhere)
 	int CountToTrigger = 1;
-	
-	UPROPERTY(EditAnywhere)
-	class AActor* EventReceiver;
 
 	int TriggerCount = 0;
 	class UBullseyeEventHandler* EventHandler;

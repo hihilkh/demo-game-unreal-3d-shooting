@@ -34,7 +34,6 @@ void UDoorOpenComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UDoorOpenComponent::Trigger()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Trigger"));
 	AnimatingTime = 0.0f;
 	SetComponentTickEnabled(true);
 }
