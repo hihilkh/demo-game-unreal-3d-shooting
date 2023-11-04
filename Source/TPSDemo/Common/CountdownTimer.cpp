@@ -21,7 +21,7 @@ void ACountdownTimer::BeginPlay()
 	SetActorTickEnabled(false);
 }
 
-void ACountdownTimer::BeginDestroy()
+void ACountdownTimer::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (DisplayUI)
 	{
@@ -29,7 +29,7 @@ void ACountdownTimer::BeginDestroy()
 		DisplayUI = nullptr;
 	}
 	
-	Super::BeginDestroy();
+	Super::EndPlay(EndPlayReason);
 }
 
 // Called every frame
