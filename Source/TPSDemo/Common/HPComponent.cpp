@@ -38,3 +38,8 @@ void UHPComponent::TakeDamage(float& Damage, bool& bDied)
 	CurrentHP -= Damage;
 	bDied = GetDied();
 }
+
+void UHPComponent::Reset()
+{
+	CurrentHP = TotalHP;
+}

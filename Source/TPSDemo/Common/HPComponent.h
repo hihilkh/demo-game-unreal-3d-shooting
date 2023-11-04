@@ -34,4 +34,6 @@ public:
 	void TakeDamage(float& Damage, bool& bDied);
 
 	FORCEINLINE float GetCurrentHP() const { return CurrentHP; }
+
+	void Reset();
 };

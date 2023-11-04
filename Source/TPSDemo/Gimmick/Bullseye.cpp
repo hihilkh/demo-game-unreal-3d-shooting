@@ -28,7 +28,6 @@ ABullseye::ABullseye()
 void ABullseye::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -40,7 +39,7 @@ void ABullseye::Tick(float DeltaTime)
 
 float ABullseye::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (GetDied())
+	if (GetTriggered())
 	{
 		return 0.0f;
 	}
@@ -58,20 +57,20 @@ float ABullseye::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent,
 	//UE_LOG(LogTemp, Warning, TEXT("Hit damage : %f, Remaining : %f"), RealDamage, HPComponent->GetCurrentHP());
 	if (bDie)
 	{
-		Die();
+		Trigger(!bCanReuse);
 	}
 		
 	return RealDamage;
 }
 
-bool ABullseye::GetDied() const
+bool ABullseye::GetTriggered() const
 {
 	return HPComponent->GetDied();
 }
 
-void ABullseye::Die()
+void ABullseye::Trigger(bool bDestroy)
 {
-	TriggeredDelegate.Broadcast();
+	TriggeredDelegate.Broadcast(this);
 
 	if (DieFX)
 	{
@@ -89,22 +88,24 @@ void ABullseye::Die()
 		}
 	}
 
-	DestroyWithTrigger(false);
+	if (bDestroy)
+	{
+		Destroy();
+	}
+	else
+	{
+		SetActive(false);
+	}
 }
 
-void ABullseye::DestroyWithTrigger(bool bTriggerFailed)
+void ABullseye::Reset()
 {
-	bool bPendingKill = !IsValidChecked(this);
-	if (bPendingKill)
-	{
-		return;
-	}
-
-	if (bTriggerFailed)
-	{
-		TriggerFailedDelegate.Broadcast();
-	}
-
-	Destroy();
+	HPComponent->Reset();
+	SetActive(true);
 }
 
+void ABullseye::SetActive(bool bActive)
+{
+	SetActorHiddenInGame(!bActive);
+	SetActorEnableCollision(bActive);
+}

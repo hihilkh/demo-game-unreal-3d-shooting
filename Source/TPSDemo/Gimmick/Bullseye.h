@@ -11,8 +11,7 @@ class TPSDEMO_API ABullseye : public AActor
 {
 	GENERATED_BODY()
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTriggeredDelegate);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTriggerFailedDelegate);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTriggeredDelegate, ABullseye*, Sender);
 	
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
@@ -38,11 +37,12 @@ class TPSDEMO_API ABullseye : public AActor
 	UPROPERTY(EditAnywhere, Category = Explosion)
 	float MaxCameraShakeDistance = 1200.0f;
 	
-	UPROPERTY(BlueprintAssignable, Category = "Event")
+	UPROPERTY(BlueprintAssignable, Category = Event)
 	FTriggeredDelegate TriggeredDelegate;
 
-	UPROPERTY(BlueprintAssignable, Category = "Event")
-	FTriggerFailedDelegate TriggerFailedDelegate;
+	/** TriggeredDelegateを2回以上Broadcastできるか */
+	UPROPERTY(EditAnywhere, Category = Event)
+	bool bCanReuse = false;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -57,10 +57,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	bool GetDied() const;
+
+	FORCEINLINE FTriggeredDelegate& OnTriggered() { return TriggeredDelegate; }
 	
-	void DestroyWithTrigger(bool bTriggerFailed);
+	UFUNCTION(BlueprintPure)
+	bool GetTriggered() const;
+
+	UFUNCTION(BlueprintCallable)
+	void Reset();
 
 private:
-	void Die();
+	void Trigger(bool bDestroy);
+	void SetActive(bool bActive);
 };
