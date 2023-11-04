@@ -66,7 +66,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ReInit();
 
+	FORCEINLINE void SetReuse(bool bReuse) { bCanReuse = bReuse; }
+
+	void SetActive(bool bActive);
+	
 private:
 	void Trigger(bool bDestroy);
-	void SetActive(bool bActive);
 };

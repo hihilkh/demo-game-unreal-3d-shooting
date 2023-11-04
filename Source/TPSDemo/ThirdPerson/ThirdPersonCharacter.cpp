@@ -81,10 +81,13 @@ void AThirdPersonCharacter::BeginPlay()
 
 	NormalMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 
-	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
-	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("weapon_r_gun"));
-	Gun->SetOwner(this);
-	//Gun->SetActorHiddenInGame(true);
+	if (GunClass)
+	{
+		Gun = GetWorld()->SpawnActor<AGun>(GunClass);
+		Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("weapon_r_gun"));
+		Gun->SetOwner(this);
+		//Gun->SetActorHiddenInGame(true);
+	}
 	
 	ResetCameraTransform(bAiming);
 }
