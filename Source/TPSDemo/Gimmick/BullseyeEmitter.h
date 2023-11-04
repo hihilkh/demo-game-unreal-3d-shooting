@@ -54,7 +54,7 @@ public:
 	void Emit();
 	
 	UFUNCTION(BlueprintCallable)
-	void Reset();
+	void ReInit();
 
 private:
 	void Trigger(bool bDestroy);

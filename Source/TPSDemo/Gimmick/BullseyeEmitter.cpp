@@ -103,7 +103,7 @@ void ABullseyeEmitter::TriggerFail()
 	EmittedBullseyeArray.Empty();
 }
 
-void ABullseyeEmitter::Reset()
+void ABullseyeEmitter::ReInit()
 {
 	TriggerFail();
 }

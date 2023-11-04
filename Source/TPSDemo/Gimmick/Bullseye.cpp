@@ -98,7 +98,7 @@ void ABullseye::Trigger(bool bDestroy)
 	}
 }
 
-void ABullseye::Reset()
+void ABullseye::ReInit()
 {
 	HPComponent->Reset();
 	SetActive(true);

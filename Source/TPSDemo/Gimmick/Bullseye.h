@@ -64,7 +64,7 @@ public:
 	bool GetTriggered() const;
 
 	UFUNCTION(BlueprintCallable)
-	void Reset();
+	void ReInit();
 
 private:
 	void Trigger(bool bDestroy);
