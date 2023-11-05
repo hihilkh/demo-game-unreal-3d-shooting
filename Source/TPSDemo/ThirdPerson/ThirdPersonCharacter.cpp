@@ -71,14 +71,8 @@ void AThirdPersonCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
-	if (ATPCPlayerController* PlayerController = Cast<ATPCPlayerController>(Controller))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		}
-	}
-
+	SetInputMode(false, false);
+	
 	NormalMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 
 	if (GunClass)
@@ -116,6 +110,27 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Attack);
 	}
 
+}
+
+void AThirdPersonCharacter::SetInputMode(bool bUIMode, bool bForceAssign)
+{
+	if (ATPCPlayerController* PlayerController = Cast<ATPCPlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			if (!bForceAssign)
+			{
+				if (Subsystem->HasMappingContext(DefaultMappingContext) || 
+					Subsystem->HasMappingContext(UIMappingContext))
+				{
+					return;
+				}
+			}
+			Subsystem->RemoveMappingContext(DefaultMappingContext);
+			Subsystem->RemoveMappingContext(UIMappingContext);
+			Subsystem->AddMappingContext(bUIMode ? UIMappingContext : DefaultMappingContext, 0);
+		}
+	}
 }
 
 void AThirdPersonCharacter::Jump()

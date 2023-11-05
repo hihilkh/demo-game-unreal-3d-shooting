@@ -13,3 +13,8 @@ ATPSDemoGameMode::ATPSDemoGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
+
+void ATPSDemoGameMode::GameOver()
+{
+	GameOverDelegate.Broadcast();
+}

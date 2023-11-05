@@ -33,6 +33,9 @@ class AThirdPersonCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* UIMappingContext;
+	
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* JumpAction;
@@ -95,6 +98,9 @@ public:
 	void Aim();
 	void StopAiming();
 	void Attack();
+
+	UFUNCTION(BlueprintCallable)
+	void SetInputMode(bool bUIMode, bool bForceAssign = true);
 	
 private:
 	void SetAiming(bool bAim);
