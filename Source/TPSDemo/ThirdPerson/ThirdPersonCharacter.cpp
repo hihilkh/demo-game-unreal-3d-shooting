@@ -184,7 +184,14 @@ void AThirdPersonCharacter::Look(const FInputActionValue& Value)
 
 void AThirdPersonCharacter::Aim()
 {
-	SetAiming(true);
+	if (GetMovementComponent()->IsFalling())
+	{
+		SetAiming(false);
+	}
+	else
+	{
+		SetAiming(true);
+	}
 }
 
 void AThirdPersonCharacter::StopAiming()
