@@ -19,9 +19,9 @@ void ALimitedTimeBullseyeGroup::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	TArray<AActor*> Children;
-	GetAllChildActors(Children, true);
-	for (auto Child : Children)
+	TArray<AActor*> AttachedActors;
+	GetAttachedActors(AttachedActors);
+	for (auto Child : AttachedActors)
 	{
 		if (ABullseye* Bullseye = Cast<ABullseye>(Child))
 		{
