@@ -30,9 +30,9 @@ void ATPCPlayerController::Look(const FInputActionValue& Value)
 	AddPitchInput(LookAxisVector.Y);
 	if (bAiming)
 	{
-		if (APawn* Pawn = GetPawn())
+		if (APawn* MyPawn = GetPawn())
 		{
-			Pawn->AddActorLocalRotation(FRotator(0.0, LookAxisVector.X * GetDeprecatedInputYawScale(), 0.0));
+			MyPawn->AddActorLocalRotation(FRotator(0.0, LookAxisVector.X * GetDeprecatedInputYawScale(), 0.0));
 		}
 	}
 }

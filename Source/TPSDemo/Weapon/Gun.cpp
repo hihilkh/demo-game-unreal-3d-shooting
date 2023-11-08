@@ -63,12 +63,12 @@ bool AGun::CanShoot() const
 
 void AGun::Shoot()
 {
-	APawn* Owner = Cast<APawn>(GetOwner());
-	if (Owner == nullptr)
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if (OwnerPawn == nullptr)
 	{
 		return;
 	}
-	AController* Controller = Owner->GetController();
+	AController* Controller = OwnerPawn->GetController();
 	if (Controller == nullptr)
 	{
 		return;
