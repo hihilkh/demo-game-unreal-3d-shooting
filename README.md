@@ -14,7 +14,7 @@ https://github.com/hihilkh/demo-game-unreal-3d-shooting/assets/35343910/639afd8c
 
 * タイトル：3D Shooting Demo
 * 概要：キャラクターを操作し、銃を使って標的を破壊し、四つのステージをクリアしましょう。
-* 実行環境：Intel MacOS (Mac PCを使って開発したので、Windows版をパッケージすることができなさそうです。Windowsの仮想マシンを利用してWindows版をパッケージするつもりでしたが、まだ成功していません。)
+* 実行環境：Windows 64bit / Intel MacOS
 * 実行ファイルを[ダウンロード](https://github.com/hihilkh/demo-game-unreal-3d-shooting/releases/latest)
 
 ## 操作方法
@@ -31,7 +31,7 @@ https://github.com/hihilkh/demo-game-unreal-3d-shooting/assets/35343910/639afd8c
 
 * 開発期間
 	* まだ開発中です。
-	* 2023/10/15 ~ 2023/11/07：v0.0.1
+	* 2023/10/15 ~ 2023/11/08：v0.0.1
 * ゲームエンジン / 言語：Unreal 5.2 (C++)
 * 環境：Intel MacOS 13.3.1
 * IDE：JetBrains Rider
