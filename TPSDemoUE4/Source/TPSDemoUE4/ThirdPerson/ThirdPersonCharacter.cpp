@@ -105,7 +105,7 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AThirdPersonCharacter::LookUpAtRate);
 	
-	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &AThirdPersonCharacter::Aim);
+	PlayerInputComponent->BindAction("Aim", IE_Repeat, this, &AThirdPersonCharacter::Aim);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &AThirdPersonCharacter::StopAiming);
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AThirdPersonCharacter::Attack);
