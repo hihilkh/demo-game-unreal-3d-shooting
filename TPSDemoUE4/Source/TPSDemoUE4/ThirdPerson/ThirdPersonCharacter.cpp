@@ -9,7 +9,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "TPCPlayerController.h"
 #include "TPSDemoUE4/Weapon/Gun.h"
-
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputActionValue.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AThirdPersonCharacter
@@ -89,33 +91,81 @@ void AThirdPersonCharacter::BeginPlay()
 
 void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
-	// Set up gameplay key bindings
-	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-	PlayerInputComponent->BindAxis("MoveForward", this, &AThirdPersonCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AThirdPersonCharacter::MoveRight);
-
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &AThirdPersonCharacter::Turn);
-	PlayerInputComponent->BindAxis("TurnRate", this, &AThirdPersonCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &AThirdPersonCharacter::LookUpAtRate);
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
+		
+		//Jumping
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 	
-	PlayerInputComponent->BindAction("Aim", IE_Repeat, this, &AThirdPersonCharacter::Aim);
-	PlayerInputComponent->BindAction("Aim", IE_Released, this, &AThirdPersonCharacter::StopAiming);
-
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AThirdPersonCharacter::Attack);
+		//Moving
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Move);
+	
+		//Looking
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Look);
+	
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Aim);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AThirdPersonCharacter::StopAiming);
+	
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Attack);
+	}
 }
 
 void AThirdPersonCharacter::SetInputMode(bool bUIMode, bool bForceAssign)
 {
 	if (ATPCPlayerController* PlayerController = Cast<ATPCPlayerController>(Controller))
 	{
-		// TODO
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			if (!bForceAssign)
+			{
+				if (Subsystem->HasMappingContext(DefaultMappingContext) || 
+					Subsystem->HasMappingContext(UIMappingContext))
+				{
+					return;
+				}
+			}
+			Subsystem->RemoveMappingContext(DefaultMappingContext);
+			Subsystem->RemoveMappingContext(UIMappingContext);
+			Subsystem->AddMappingContext(bUIMode ? UIMappingContext : DefaultMappingContext, 0);
+		}
+	}
+}
+
+void AThirdPersonCharacter::Move(const FInputActionValue& Value)
+{
+	const FVector2D MovementVector = Value.Get<FVector2D>();
+	
+	if (Controller != nullptr)
+	{
+		if (bAiming)
+		{
+			AddMovementInput(GetActorForwardVector(), MovementVector.Y);
+			AddMovementInput(GetActorRightVector(), MovementVector.X);
+		}
+		else
+		{
+			// find out which way is forward
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+			// get forward vector
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	
+			// get right vector 
+			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+			// add movement 
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+			AddMovementInput(RightDirection, MovementVector.X);
+		}
+	}
+}
+
+void AThirdPersonCharacter::Look(const FInputActionValue& Value)
+{
+	if (ATPCPlayerController* PlayerController = Cast<ATPCPlayerController>(Controller))
+	{
+		PlayerController->Look(Value);
 	}
 }
 
@@ -129,74 +179,9 @@ void AThirdPersonCharacter::Jump()
 	Super::Jump();
 }
 
-void AThirdPersonCharacter::MoveForward(float Value)
-{
-	if (Controller != nullptr && Value != 0.0f)
-	{
-		if (bAiming)
-		{
-			AddMovementInput(GetActorForwardVector(), Value);
-		}
-		else
-		{
-			// find out which way is forward
-			const FRotator Rotation = Controller->GetControlRotation();
-			const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-			// get forward vector
-			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-			// add movement 
-			AddMovementInput(ForwardDirection, Value);
-		}
-	}
-}
-
-void AThirdPersonCharacter::MoveRight(float Value)
-{
-	if (Controller != nullptr && Value != 0.0f)
-	{
-		if (bAiming)
-		{
-			AddMovementInput(GetActorRightVector(), Value);
-		}
-		else
-		{
-			// find out which way is forward
-			const FRotator Rotation = Controller->GetControlRotation();
-			const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-			// get right vector 
-			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-			// add movement 
-			AddMovementInput(RightDirection, Value);
-		}
-	}
-}
-
-void AThirdPersonCharacter::Turn(float Val)
-{
-	if (ATPCPlayerController* PlayerController = Cast<ATPCPlayerController>(Controller))
-	{
-		PlayerController->Turn(Val);
-	}
-}
-
-void AThirdPersonCharacter::TurnAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	Turn(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
-void AThirdPersonCharacter::LookUpAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
-
 void AThirdPersonCharacter::Aim()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Aim"));
 	if (GetMovementComponent()->IsFalling())
 	{
 		SetAiming(false);
@@ -209,6 +194,7 @@ void AThirdPersonCharacter::Aim()
 
 void AThirdPersonCharacter::StopAiming()
 {
+	UE_LOG(LogTemp, Warning, TEXT("StopAiming"));
 	SetAiming(false);
 }
 
@@ -258,6 +244,7 @@ void AThirdPersonCharacter::ResetCameraTransform(bool bAim)
 
 void AThirdPersonCharacter::Attack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Attack"));
 	if (bAiming)
 	{
 		if (Gun)

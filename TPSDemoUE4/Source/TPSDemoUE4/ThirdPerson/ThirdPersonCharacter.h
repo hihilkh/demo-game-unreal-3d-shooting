@@ -28,13 +28,26 @@ class AThirdPersonCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UChildActorComponent* AimingCameraChild;
 
-	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Camera, meta = (AllowPrivateAccess = "true"))
-	float BaseTurnRate;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* DefaultMappingContext;
 
-	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Camera, meta = (AllowPrivateAccess = "true"))
-	float BaseLookUpRate;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* UIMappingContext;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* LookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* AimAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* AttackAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Aiming, meta = (AllowPrivateAccess = "true"))
 	float AimingMaxWalkSpeed;
@@ -71,12 +84,9 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	void Move(const struct FInputActionValue& Value);
+	void Look(const struct FInputActionValue& Value);
 	void Jump() override;
-	void MoveForward(float Value);
-	void MoveRight(float Value);
-	void Turn(float Rate);
-	void TurnAtRate(float Rate);
-	void LookUpAtRate(float Rate);
 	void Aim();
 	void StopAiming();
 	void Attack();

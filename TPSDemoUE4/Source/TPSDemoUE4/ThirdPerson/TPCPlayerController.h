@@ -33,6 +33,12 @@ class TPSDEMOUE4_API ATPCPlayerController : public APlayerController
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pitch, meta = (AllowPrivateAccess = "true"))
 	float AimingViewPitchMax;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Look, meta = (AllowPrivateAccess = "true"))
+	float LookHorizontalRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Look, meta = (AllowPrivateAccess = "true"))
+	float LookVerticalRate;
+
 public:
 	ATPCPlayerController();
 	
@@ -40,7 +46,7 @@ protected:
 	void BeginPlay() override;
 	
 public:
-	void Turn(float Val);
+	void Look(const struct FInputActionValue& Value);
 	void SetAiming(bool bAim);
 
 private:

@@ -2,6 +2,7 @@
 
 
 #include "TPCPlayerController.h"
+#include "InputActionValue.h"
 #include "Blueprint/UserWidget.h"
 
 ATPCPlayerController::ATPCPlayerController() :
@@ -9,7 +10,9 @@ ATPCPlayerController::ATPCPlayerController() :
 	NormalViewPitchMin(-89.0f),
 	NormalViewPitchMax(89.0f),
 	AimingViewPitchMin(-45.0f),
-	AimingViewPitchMax(30.0f)
+	AimingViewPitchMax(30.0f),
+	LookHorizontalRate(80.0f),
+	LookVerticalRate(50.0f)
 {
 }
 
@@ -22,14 +25,18 @@ void ATPCPlayerController::BeginPlay()
 	SetAiming(bAiming);
 }
 
-void ATPCPlayerController::Turn(float Val)
+void ATPCPlayerController::Look(const FInputActionValue& Value)
 {
-	AddYawInput(Val);
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
+	float LookHorizontalValue = LookAxisVector.X * LookHorizontalRate * GetWorld()->GetDeltaSeconds();
+	float LookVerticalValue = LookAxisVector.Y * LookVerticalRate * GetWorld()->GetDeltaSeconds();
+	AddYawInput(LookHorizontalValue);
+	AddPitchInput(LookVerticalValue);
 	if (bAiming)
 	{
 		if (APawn* MyPawn = GetPawn())
 		{
-			MyPawn->AddActorLocalRotation(FRotator(0.0, Val * InputYawScale, 0.0));
+			MyPawn->AddActorLocalRotation(FRotator(0.0, LookHorizontalValue * InputYawScale, 0.0));
 		}
 	}
 }
