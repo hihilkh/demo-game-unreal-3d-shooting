@@ -181,7 +181,6 @@ void AThirdPersonCharacter::Jump()
 
 void AThirdPersonCharacter::Aim()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Aim"));
 	if (GetMovementComponent()->IsFalling())
 	{
 		SetAiming(false);
@@ -194,7 +193,6 @@ void AThirdPersonCharacter::Aim()
 
 void AThirdPersonCharacter::StopAiming()
 {
-	UE_LOG(LogTemp, Warning, TEXT("StopAiming"));
 	SetAiming(false);
 }
 
@@ -244,7 +242,6 @@ void AThirdPersonCharacter::ResetCameraTransform(bool bAim)
 
 void AThirdPersonCharacter::Attack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack"));
 	if (bAiming)
 	{
 		if (Gun)
