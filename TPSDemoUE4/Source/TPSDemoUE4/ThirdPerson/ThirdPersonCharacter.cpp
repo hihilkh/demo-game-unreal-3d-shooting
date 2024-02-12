@@ -94,7 +94,7 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		//Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 	
 		//Moving
@@ -107,6 +107,13 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AThirdPersonCharacter::StopAiming);
 	
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Attack);
+
+		//UI
+		// Remarks : It seems that in Unreal4.27, Widget BP cannot directly bind to EnhancedInput events, so I redirect the event by character
+		// Remarks : Also, it seems that in Unreal4.27, switching input mode (AThirdPersonCharacter::SetInputMode()) while ETriggerEvent::Started
+		// will trigger the ETriggerEvent::Started event of the new input mode.
+		// So I use ETriggerEvent::Completed for UI input.
+		EnhancedInputComponent->BindAction(UIConfirmAction, ETriggerEvent::Completed, this, &AThirdPersonCharacter::UIConfirmClick);
 	}
 }
 
@@ -118,15 +125,15 @@ void AThirdPersonCharacter::SetInputMode(bool bUIMode, bool bForceAssign)
 		{
 			if (!bForceAssign)
 			{
-				if (Subsystem->HasMappingContext(DefaultMappingContext) || 
-					Subsystem->HasMappingContext(UIMappingContext))
+				if (Subsystem->HasMappingContext(GameInputMappingContext) || 
+					Subsystem->HasMappingContext(UIInputMappingContext))
 				{
 					return;
 				}
 			}
-			Subsystem->RemoveMappingContext(DefaultMappingContext);
-			Subsystem->RemoveMappingContext(UIMappingContext);
-			Subsystem->AddMappingContext(bUIMode ? UIMappingContext : DefaultMappingContext, 0);
+			
+			Subsystem->ClearAllMappings();
+			Subsystem->AddMappingContext(bUIMode ? UIInputMappingContext : GameInputMappingContext, 0);
 		}
 	}
 }
@@ -253,4 +260,9 @@ void AThirdPersonCharacter::Attack()
 	{
 		// TODO
 	}
+}
+
+void AThirdPersonCharacter::UIConfirmClick()
+{
+	UIConfirmClickedDelegate.Broadcast(this);
 }

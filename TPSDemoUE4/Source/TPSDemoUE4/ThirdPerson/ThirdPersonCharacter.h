@@ -14,6 +14,8 @@ class AThirdPersonCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUIConfirmClickedDelegate, AThirdPersonCharacter*, Sender);
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -29,10 +31,10 @@ class AThirdPersonCharacter : public ACharacter
 	class UChildActorComponent* AimingCameraChild;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* DefaultMappingContext;
+	class UInputMappingContext* GameInputMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* UIMappingContext;
+	class UInputMappingContext* UIInputMappingContext;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* JumpAction;
@@ -48,6 +50,9 @@ class AThirdPersonCharacter : public ACharacter
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* AttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* UIConfirmAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Aiming, meta = (AllowPrivateAccess = "true"))
 	float AimingMaxWalkSpeed;
@@ -66,10 +71,12 @@ class AThirdPersonCharacter : public ACharacter
 
 	UPROPERTY()
 	AGun* Gun;
+
+	UPROPERTY(BlueprintAssignable, Category = Event)
+	FUIConfirmClickedDelegate UIConfirmClickedDelegate;
 	
 public:
 	AThirdPersonCharacter();
-	
 
 protected:
 	// APawn interface
@@ -91,7 +98,6 @@ public:
 	void StopAiming();
 	void Attack();
 	
-
 	UFUNCTION(BlueprintCallable)
 	void SetInputMode(bool bUIMode, bool bForceAssign = true);
 	
@@ -100,5 +106,7 @@ private:
 	
 	UFUNCTION(BlueprintCallable, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	void ResetCameraTransform(bool bAim);
+
+	void UIConfirmClick();
 };
 

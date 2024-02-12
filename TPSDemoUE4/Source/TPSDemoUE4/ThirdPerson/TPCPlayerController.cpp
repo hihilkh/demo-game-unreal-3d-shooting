@@ -58,7 +58,7 @@ void ATPCPlayerController::SetCrosshairs(bool bShow)
 		}
 		else
 		{
-			Crosshairs->SetVisibility(ESlateVisibility::Hidden);
+			Crosshairs->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 }
